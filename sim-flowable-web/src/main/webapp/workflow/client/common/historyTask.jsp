@@ -5,7 +5,6 @@
 <head>
     <title></title>
     <link rel="stylesheet" href="../../../common/css/bootstrap.css">
-    <link type="text/css" rel="stylesheet" href="../../../common/css/font-awesome.css"/>
     <link type="text/css" rel="stylesheet" href="../../../common/css/ui.jqgrid.css"/>
     <link type="text/css" rel="stylesheet" href="../../../common/css/ace.css"/>
 

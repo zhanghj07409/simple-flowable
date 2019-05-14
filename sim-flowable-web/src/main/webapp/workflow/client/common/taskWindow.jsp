@@ -125,10 +125,41 @@
 
 <script type="text/javascript">
 
+
+
     var firstPageUrl = "";
     var processInstanceVariables;
     var businesskey ;
     $(function () {
+
+        $("#myTab a").click(function (e) {
+            e.preventDefault();
+            //$(this).tab("show");
+            var href = $(this).attr("href");
+            var $targetPane = $(href);
+            if($targetPane.children().length > 0){
+                // need not dealing with it
+            }else{
+                if(href == "#home"){
+                    $targetPane.addClass('in').addClass("active");
+                    loadHtml("home",firstPageUrl,urlParam,function () {
+                        addProcessButton();
+                    });
+                }
+                if(href == "#diagram"){
+                    $targetPane.addClass('in').addClass("active");
+                    var url = "${pageContext.request.contextPath}/workflow/client/common/diagram.jsp";
+                    loadHtml("diagram",url,urlParam);
+                }
+                if(href == "#hisInfo"){
+                    $targetPane.addClass('in').addClass("active");
+                    var url = "${pageContext.request.contextPath}/workflow/client/common/historyTask.jsp";
+                    loadHtml("hisInfo",url,urlParam);
+                }
+            }
+        });
+
+
         processInstanceVariables = queryVariables(urlParam["taskId"]);
         businesskey = queryBusinessKey(urlParam["taskId"]);
         $.extend(urlParam,processInstanceVariables);
@@ -142,7 +173,7 @@
         if(urlParam["formKey"] != undefined && urlParam["formKey"] != "") {
             loadHtml("home", firstPageUrl, urlParam, function () {
                 addProcessButton();
-                $('#myTab a:first').tab('show');
+                //$('#myTab a:first').tab('show');
             });
         } else {
             addProcessButton();
@@ -150,32 +181,7 @@
         $("#diagram").height(document.documentElement.clientHeight - 200);
     });
 
-    $("#myTab a").click(function (e) {
-        e.preventDefault();
-        $(this).tab('show');
-        var href = $(this).attr("href");
-        var $targetPane = $(href);
-        if($targetPane.children().length > 0){
-            // need not dealing with it
-        }else{
-            if(href == "#home"){
-                $targetPane.addClass('in').addClass("active");
-                loadHtml("home",firstPageUrl,urlParam,function () {
-                    addProcessButton();
-                });
-            }
-            if(href == "#diagram"){
-                $targetPane.addClass('in').addClass("active");
-                var url = "${pageContext.request.contextPath}/workflow/client/common/diagram.jsp";
-                loadHtml("diagram",url,urlParam);
-            }
-            if(href == "#hisInfo"){
-                $targetPane.addClass('in').addClass("active");
-                var url = "${pageContext.request.contextPath}/workflow/client/common/historyTask.jsp";
-                loadHtml("hisInfo",url,urlParam);
-            }
-        }
-    });
+
 
 
     //使用get方法加载页面
