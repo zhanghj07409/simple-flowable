@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+eureka:
+  instance:
+    hostname: ${spring.cloud.client.ipAddress}
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    healthcheck:
+      enabled: true
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://admin:admin@localhost:8081/eureka/
+
+# 配置 eureka 登录密码
+security:
+  basic:
+    enabled: true
+  user:
+    name: admin
+    password: admin

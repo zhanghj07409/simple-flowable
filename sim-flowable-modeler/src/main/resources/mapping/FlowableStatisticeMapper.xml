@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowable.extention.task.dao.FlowableStatisticsDao">
+
+    <resultMap id="taskResultMap" type="com.flowable.extention.task.query.TaskInfoQuery">
+        <id property="id" column="ID_" jdbcType="VARCHAR"/>
+        <result property="revision" column="REV_" jdbcType="INTEGER"/>
+        <result property="name" column="NAME_" jdbcType="VARCHAR"/>
+        <result property="parentTaskId" column="PARENT_TASK_ID_" jdbcType="VARCHAR"/>
+        <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR"/>
+        <result property="createTime" column="CREATE_TIME_" jdbcType="TIMESTAMP" />
+        <result property="owner" column="OWNER_" jdbcType="VARCHAR"/>
+        <result property="assignee" column="ASSIGNEE_" jdbcType="VARCHAR"/>
+        <result property="executionId" column="EXECUTION_ID_" jdbcType="VARCHAR" />
+        <result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
+        <result property="processDefinitionId" column="PROC_DEF_ID_" jdbcType="VARCHAR"/>
+        <result property="taskDefinitionKey" column="TASK_DEF_KEY_" jdbcType="VARCHAR"/>
+        <result property="dueDate" column="DUE_DATE_" jdbcType="TIMESTAMP"/>
+        <result property="formKey" column="FORM_KEY_" jdbcType="VARCHAR" />
+        <result property="claimTime" column="CLAIM_TIME_" jdbcType="TIMESTAMP" />
+        <result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR" />
+        <result property="businessinfo" column="businessinfo" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="listStatistics" resultType="java.util.HashMap">
+        select d.text_ as name, count(distinct a.id_) as total
+        from act_ru_task a
+        INNER JOIN act_re_procdef b on a.proc_def_id_ = b.id_
+        LEFT OUTER JOIN act_ru_identitylink c on (a.proc_inst_id_ = c.proc_inst_id_ or a.id_ = c.task_id_)
+        LEFT OUTER JOIN act_ru_variable d on a.proc_inst_id_ = d.proc_inst_id_
+        where
+            a.SUSPENSION_STATE_ = '1'
+           <if test="processDefinitionKey != null and processDefinitionKey != ''">
+            and b.key_ = #{processDefinitionKey}
+           </if>
+           <if test="groupByKeyName != null and groupByKeyName != ''">
+             and d.name_ = #{groupByKeyName}
+           </if>
+           <if test="userId != null and userId != ''">
+             and (a.assignee_ = #{userId}
+                 or (a.assignee_ is null
+                    and c.TYPE_ = 'candidate'
+                    and (c.user_id_ = #{userId}
+                     <if test="groupIds != null and groupIds.size() > 0">
+                       or c.group_id_ in
+                       <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+                         #{groupId}
+                       </foreach>
+                     </if>
+                      )
+                  )
+               )
+           </if>
+          group by d.text_
+    </select>
+
+    <select id="listStatisticsBySubProcess" resultType="java.util.HashMap">
+        select b.key_ as processDefinitionKey ,d.text_ as name, count(distinct a.id_) as total
+        from act_ru_task a
+        INNER JOIN act_re_procdef b on a.proc_def_id_ = b.id_
+        LEFT OUTER JOIN act_ru_identitylink c on (a.proc_inst_id_ = c.proc_inst_id_ or a.id_ = c.task_id_)
+        LEFT OUTER JOIN act_ru_variable d on a.proc_inst_id_ = d.proc_inst_id_
+        where
+        a.SUSPENSION_STATE_ = '1'
+        <if test="processDefinitionKeys != null and processDefinitionKeys.size > 0">
+            and b.key_ in
+            <foreach collection="processDefinitionKeys" item="processDefinitionKey" open="(" separator="," close=")">
+                #{processDefinitionKey}
+            </foreach>
+        </if>
+        <if test="groupByKeyName != null and groupByKeyName != ''">
+            and d.name_ = #{groupByKeyName}
+        </if>
+        <if test="userId != null and userId != ''">
+            and (a.assignee_ = #{userId}
+            or (a.assignee_ is null
+            and c.TYPE_ = 'candidate'
+            and (c.user_id_ = #{userId}
+            <if test="groupIds != null and groupIds.size() > 0">
+                or c.group_id_ in
+                <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+                    #{groupId}
+                </foreach>
+            </if>
+            )
+            )
+            )
+        </if>
+        group by b.key_, d.text_
+    </select>
+
+    <select id="listStatisticsByOperationFlag" resultType="java.util.HashMap">
+        select d.text_ as name, count(distinct a.id_) as total
+        from act_ru_task a
+        INNER JOIN act_re_procdef b on a.proc_def_id_ = b.id_
+        LEFT OUTER JOIN act_ru_identitylink c on (a.proc_inst_id_ = c.proc_inst_id_ or a.id_ = c.task_id_)
+        LEFT OUTER JOIN act_ru_variable d on a.proc_inst_id_ = d.proc_inst_id_
+        where
+        a.SUSPENSION_STATE_ = '1'
+        <if test="processDefinitionKey != null and processDefinitionKey != ''">
+            and b.key_ = #{processDefinitionKey}
+        </if>
+        <if test="groupByKeyName != null and groupByKeyName != ''">
+            and d.name_ = #{groupByKeyName}
+        </if>
+        <if test="userId != null and userId != ''">
+            and (a.assignee_ = #{userId}
+            or (a.assignee_ is null
+            and c.TYPE_ = 'candidate'
+            and (c.user_id_ = #{userId}
+            <if test="groupIds != null and groupIds.size() > 0">
+                or c.group_id_ in
+                <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+                    #{groupId}
+                </foreach>
+            </if>
+            )
+            )
+            )
+        </if>
+        <if test="flags != null and flags.length > 0 and operationKey != null and operationKey != ''">
+            AND EXISTS (select 1 from act_ru_variable e where a.proc_inst_id_ = e.proc_inst_id_ and e.name_ = #{operationKey} and e.text_ in
+            <foreach collection="flags" item="operationFlag" open="(" separator="," close=")">
+                #{operationFlag}
+            </foreach>
+            )
+        </if>
+        group by d.text_
+    </select>
+
+    <select id="listStatisticsByOperationFlagAndSubProcess" resultType="java.util.HashMap">
+        select b.key_ as processDefinitionKey ,d.text_ as name, count(distinct a.id_) as total
+        from act_ru_task a
+        INNER JOIN act_re_procdef b on a.proc_def_id_ = b.id_
+        LEFT OUTER JOIN act_ru_identitylink c on (a.proc_inst_id_ = c.proc_inst_id_ or a.id_ = c.task_id_)
+        LEFT OUTER JOIN act_ru_variable d on a.proc_inst_id_ = d.proc_inst_id_
+        where
+        a.SUSPENSION_STATE_ = '1'
+        <if test="processDefinitionKeys != null and processDefinitionKeys.size > 0">
+            and b.key_ in
+            <foreach collection="processDefinitionKeys" item="processDefinitionKey" open="(" separator="," close=")">
+                #{processDefinitionKey}
+            </foreach>
+        </if>
+        <if test="groupByKeyName != null and groupByKeyName != ''">
+            and d.name_ = #{groupByKeyName}
+        </if>
+        <if test="userId != null and userId != ''">
+            and (a.assignee_ = #{userId}
+            or (a.assignee_ is null
+            and c.TYPE_ = 'candidate'
+            and (c.user_id_ = #{userId}
+            <if test="groupIds != null and groupIds.size() > 0">
+                or c.group_id_ in
+                <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+                    #{groupId}
+                </foreach>
+            </if>
+            )
+            )
+            )
+        </if>
+        <if test="flags != null and flags.length > 0 and operationKey != null and operationKey != ''">
+            AND EXISTS (select 1 from act_ru_variable e where a.proc_inst_id_ = e.proc_inst_id_ and e.name_ = #{operationKey} and e.text_ in
+            <foreach collection="flags" item="operationFlag" open="(" separator="," close=")">
+                #{operationFlag}
+            </foreach>
+            )
+        </if>
+        group by b.key_, d.text_
+    </select>
+
+    <select id="selectTaskByoperationFlag" resultMap="taskResultMap">
+        select distinct a.*, exe.BUSINESS_KEY_,COLUMN_JSON(extu.business_info_) as businessinfo
+        from act_ru_task a
+        INNER JOIN act_re_procdef b on a.proc_def_id_ = b.id_
+        INNER JOIN act_ru_execution exe on a.proc_inst_id_ = exe.id_
+        LEFT OUTER JOIN act_ru_identitylink c on (a.proc_inst_id_ = c.proc_inst_id_ or a.id_ = c.task_id_)
+        LEFT OUTER JOIN act_ru_variable d on a.proc_inst_id_ = d.proc_inst_id_
+        left outer join t_wf_ext_execution extu on a.proc_inst_id_=extu.proc_inst_id_
+        where
+        a.SUSPENSION_STATE_ = '1'
+        <if test="processDefinitionKey != null and processDefinitionKey != ''">
+            and b.key_ = #{processDefinitionKey}
+        </if>
+        <if test="keyName != null and keyName != ''">
+            and d.name_ = #{keyName}
+        </if>
+        <if test="keyValue != null and keyValue != ''">
+            and d.text_ = #{keyValue}
+        </if>
+        <if test="userId != null and userId != ''">
+            and (a.assignee_ = #{userId}
+            or (a.assignee_ is null
+            and c.TYPE_ = 'candidate'
+            and (c.user_id_ = #{userId}
+            <if test="groupIds != null and groupIds.size() > 0">
+                or c.group_id_ in
+                <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+                    #{groupId}
+                </foreach>
+            </if>
+            )
+            )
+            )
+        </if>
+        <if test="flags != null and flags.length > 0 and operationKey != null and operationKey != ''">
+            AND EXISTS (select 1 from act_ru_variable e where a.proc_inst_id_ = e.proc_inst_id_ and e.name_ = #{operationKey} and e.text_ in
+            <foreach collection="flags" item="operationFlag" open="(" separator="," close=")">
+                #{operationFlag}
+            </foreach>
+            )
+        </if>
+        <if test="offset != null and rows != null">
+            LIMIT #{offset}, #{rows}
+        </if>
+    </select>
+
+    <select id="selectTaskByoperationFlagCount" resultType="java.lang.Integer">
+        select count(distinct a.ID_)
+        from act_ru_task a
+        INNER JOIN act_re_procdef b on a.proc_def_id_ = b.id_
+        INNER JOIN act_ru_execution exe on a.proc_inst_id_ = exe.id_
+        LEFT OUTER JOIN act_ru_identitylink c on (a.proc_inst_id_ = c.proc_inst_id_ or a.id_ = c.task_id_)
+        LEFT OUTER JOIN act_ru_variable d on a.proc_inst_id_ = d.proc_inst_id_
+        left outer join t_wf_ext_execution extu on a.proc_inst_id_=extu.proc_inst_id_
+        where
+        a.SUSPENSION_STATE_ = '1'
+        <if test="processDefinitionKey != null and processDefinitionKey != ''">
+            and b.key_ = #{processDefinitionKey}
+        </if>
+        <if test="keyName != null and keyName != ''">
+            and d.name_ = #{keyName}
+        </if>
+        <if test="keyValue != null and keyValue != ''">
+            and d.text_ = #{keyValue}
+        </if>
+        <if test="userId != null and userId != ''">
+            and (a.assignee_ = #{userId}
+            or (a.assignee_ is null
+            and c.TYPE_ = 'candidate'
+            and (c.user_id_ = #{userId}
+            <if test="groupIds != null and groupIds.size() > 0">
+                or c.group_id_ in
+                <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+                    #{groupId}
+                </foreach>
+            </if>
+            )
+            )
+            )
+        </if>
+        <if test="flags != null and flags.length > 0 and operationKey != null and operationKey != ''">
+            AND EXISTS (select 1 from act_ru_variable e where a.proc_inst_id_ = e.proc_inst_id_ and e.name_ = #{operationKey} and e.text_ in
+            <foreach collection="flags" item="operationFlag" open="(" separator="," close=")">
+                #{operationFlag}
+            </foreach>
+            )
+        </if>
+    </select>
+
+</mapper>

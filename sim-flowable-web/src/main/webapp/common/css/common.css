@@ -1,0 +1,197 @@
+
+ /*# 版本：1.0
+ # 系统名称: RUI
+ # 作者：huangxx
+ # 邮箱：huangxx@chx
+ # 软件版权: ceyingfintech
+ # 修改记录:
+ # 修改日期             修改人员         修改说明
+ # ========   =======  ============================================
+ # 
+ # ========   =======  ============================================*/
+
+
+.btn-noborder{
+	border: none;
+}
+.page-content{
+	padding: 5px 10px;
+}
+/*modal背景色，原为黑 改为透明*/
+.modal-backdrop{
+	/*background-color: transparent;*/
+}
+#treewrap{
+	overflow: auto;
+}
+/*
+遮罩样式*/
+ .set_mask{
+  background: #111415;
+  opacity: 0.3;
+  filter:alpha(opacity=30);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+ }
+ .mask_message{
+  width: 250px;
+  height: 40px;
+  border: 1px solid #E5E5E5;
+  background-color: #000000;
+  position: absolute;
+  line-height: 40px;
+  text-align: center;
+  color: white;
+ }
+ .tips{
+   position: absolute;
+   left: -8px;
+   top: 3px;
+   color: red;
+}
+.tab_title{
+    overflow: scroll;
+    margin-bottom: -18px !important;
+    background:#F0F0F0;
+}
+.tab_title thead tr{
+    background: #3C99CE;
+}
+.tab_title thead tr th{
+    padding: 5px 5px;
+    border: none;
+    font-weight: 500;
+    color: white;
+    border-left: 1px solid #E1E1E1;
+    border-bottom: 1px solid #E1E1E1;
+}
+.tab_data{
+    position: relative;
+    background: white !important;
+    overflow-y: scroll;
+}
+.tab_data table{
+    min-width: 100%;
+}
+.tab_page{
+    background-color: #EFF3F8;
+    height: 40px;
+    width: 100%;
+    position: relative;
+    padding: 0 10px;
+}
+.tab_col{
+    background-color: #F9F9F9;
+}
+
+.tab_page{
+    text-align: center;
+}
+.page_nav{
+    line-height: 50px;
+}
+.page_bgimg {
+    background-image: url(../img/pagination_icons.png);
+    background-color: white;
+    border: 1px solid #D0D0D0;
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.page_bgimg_pos1 {
+    background-position: -17px 0;
+}
+
+.page_bgimg_pos2 {
+    background-position: -32px 0;
+}
+
+.page_bgimg_pos3 {
+    background-position: -48px 0;
+}
+
+.page_bgimg_pos4 {
+    background-position: -65px 0;
+}
+.tab_page p {
+    margin: 0px;
+    font-size: 14px;
+    padding: 0 10px;
+    display: inline-block;
+    float: right;
+    line-height: 50px;
+}
+.page_nav span {
+    font-size: 11px;
+    margin: 0 2px;
+    vertical-align: middle;
+    color: #454D4E;
+}
+
+.page_nav span:hover {
+    border: 1px solid #D7E4F9;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.page_nav span:active {
+    border: 1px solid #D7E4F9;
+    border-radius: 50%;
+    background-color: #D7E4F9;
+    cursor: pointer;
+}
+
+.page_nav span:nth-of-type(3):hover,
+.page_nav span:nth-of-type(4):hover,
+.page_nav span:nth-of-type(3):active,
+.page_nav span:nth-of-type(4):active {
+    border: none;
+    background-color: inherit;
+}
+.tab_page button{
+    float: left;
+    background-color: #428BCA;
+    border: 3px solid #428BCA;
+    padding: 3px 5px;
+    color: white;
+    margin: 5px;
+}
+.tab_page button:hover{
+    background-color: #316897;
+    cursor: pointer;
+}
+.tab_page button:active{
+    margin-top: 7px;
+
+}
+.edit_btn,.save_add{
+    color: #428BCA;
+    margin: 2px 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.save_btn{
+    color: #7BAE4C;
+    margin: 2px 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.del_btn,.cancel_btn,.cancel_add{
+    color: red;
+    margin: 2px 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.change_text{
+    width: 100%;
+    height: 28px;
+    border: none !important;
+}
+.row_col{
+    background-color: #F9F9F9;
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowable.extention.task.dao.HistoryActTaskDao">
+
+    <resultMap id="historyActTaskInstanceResultMap" type="com.flowable.extention.task.query.HistoryActTaskInstanceQuery">
+        <id property="id" column="ID_" jdbcType="VARCHAR" />
+        <result property="rev" column="REV_" jdbcType="INTEGER"/>
+        <result property="procDefId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />
+        <result property="procInstId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
+        <result property="executionId" column="EXECUTION_ID_" jdbcType="VARCHAR"/>
+        <result property="activityId" column="ACT_ID_" jdbcType="VARCHAR" />
+        <result property="taskId" column="TASK_ID_" jdbcType="VARCHAR" />
+        <result property="callProcInstId" column="CALL_PROC_INST_ID_" jdbcType="VARCHAR" />
+        <result property="activityName" column="ACT_NAME_" jdbcType="VARCHAR" />
+        <result property="activityType" column="ACT_TYPE_" jdbcType="VARCHAR" />
+        <result property="assignee" column="ASSIGNEE_" jdbcType="VARCHAR" />
+        <result property="startTime" column="START_TIME_" jdbcType="TIMESTAMP" />
+        <result property="endTime" column="END_TIME_" jdbcType="TIMESTAMP" />
+        <result property="duration" column="DURATION_" jdbcType="BIGINT" />
+        <result property="deleteReason" column="DELETE_REASON_" jdbcType="VARCHAR" />
+        <result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
+        <result property="description" column="DESCRIPTION_" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="listHistoryActTaskInstance" parameterType="java.lang.String" resultMap="historyActTaskInstanceResultMap">
+        select hipro.start_user_id_ as ASSIGNEE_,'' as DESCRIPTION_,RES.ID_, RES.REV_, RES.PROC_DEF_ID_, RES.PROC_INST_ID_, RES.EXECUTION_ID_, RES.ACT_ID_, RES.TASK_ID_, RES.CALL_PROC_INST_ID_, RES.ACT_NAME_, RES.ACT_TYPE_, RES.START_TIME_, RES.END_TIME_, RES.DURATION_, RES.DELETE_REASON_, RES.TENANT_ID_ from ACT_HI_ACTINST RES LEFT JOIN act_hi_procinst hipro on RES.PROC_INST_ID_=hipro.PROC_INST_ID_
+        where  RES.PROC_INST_ID_ = #{procInstId} and RES.ACT_ID_='startEvent1'
+        union
+        (select RES.ASSIGNEE_,task.DESCRIPTION_, RES.ID_, RES.REV_, RES.PROC_DEF_ID_, RES.PROC_INST_ID_, RES.EXECUTION_ID_, RES.ACT_ID_, RES.TASK_ID_, RES.CALL_PROC_INST_ID_, RES.ACT_NAME_, RES.ACT_TYPE_, RES.START_TIME_, RES.END_TIME_, RES.DURATION_, RES.DELETE_REASON_, RES.TENANT_ID_ from ACT_HI_ACTINST RES LEFT JOIN act_hi_taskinst task on RES.TASK_ID_=task.ID_
+        where RES.ASSIGNEE_ IS NOT NULL
+        <if test="procInstId != null and procInstId != ''">
+            AND RES.PROC_INST_ID_ = #{procInstId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND (
+            SUBSTR(RES.ASSIGNEE_,1,12)=(select SUBSTR(proc.START_USER_ID_,1,12) from ACT_HI_PROCINST proc where
+            proc.proc_inst_id_=RES.PROC_INST_ID_)
+            OR SUBSTR(RES.ASSIGNEE_,1,12) = SUBSTR(#{userId},1,12)
+            OR SUBSTR(RES.ASSIGNEE_,2,12) = SUBSTR(#{userId},1,12)
+            OR SUBSTR(#{userId},1,12) = (select SUBSTR(proc.START_USER_ID_,1,12) from ACT_HI_PROCINST proc where
+            proc.proc_inst_id_=RES.PROC_INST_ID_)
+            )
+        </if>
+        <if test="page != null and rows != null">
+            order by START_TIME_
+            limit #{page}, #{rows}
+        </if>
+        )
+    </select>
+
+    <select id="listHistoryActTaskInstanceCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(0) from (
+        select hipro.start_user_id_ as ASSIGNEE_,'' as DESCRIPTION_,RES.ID_, RES.REV_, RES.PROC_DEF_ID_, RES.PROC_INST_ID_, RES.EXECUTION_ID_, RES.ACT_ID_, RES.TASK_ID_, RES.CALL_PROC_INST_ID_, RES.ACT_NAME_, RES.ACT_TYPE_, RES.START_TIME_, RES.END_TIME_, RES.DURATION_, RES.DELETE_REASON_, RES.TENANT_ID_ from ACT_HI_ACTINST RES LEFT JOIN act_hi_procinst hipro on RES.PROC_INST_ID_=hipro.PROC_INST_ID_
+        where  RES.PROC_INST_ID_ = #{procInstId} and RES.ACT_ID_='startEvent1'
+        union
+        (select RES.ASSIGNEE_,task.DESCRIPTION_, RES.ID_, RES.REV_, RES.PROC_DEF_ID_, RES.PROC_INST_ID_, RES.EXECUTION_ID_, RES.ACT_ID_, RES.TASK_ID_, RES.CALL_PROC_INST_ID_, RES.ACT_NAME_, RES.ACT_TYPE_, RES.START_TIME_, RES.END_TIME_, RES.DURATION_, RES.DELETE_REASON_, RES.TENANT_ID_ from ACT_HI_ACTINST RES LEFT JOIN act_hi_taskinst task on RES.TASK_ID_=task.ID_
+        where RES.ASSIGNEE_ IS NOT NULL
+        <if test="procInstId != null and procInstId != ''">
+            AND RES.PROC_INST_ID_ = #{procInstId}
+        </if>
+        <if test="userId != null and userId != ''">
+            AND (
+            SUBSTR(RES.ASSIGNEE_,1,12)=(select SUBSTR(proc.START_USER_ID_,1,12) from ACT_HI_PROCINST proc where
+            proc.proc_inst_id_=RES.PROC_INST_ID_)
+            OR SUBSTR(RES.ASSIGNEE_,1,12) = SUBSTR(#{userId},1,12)
+            OR SUBSTR(RES.ASSIGNEE_,2,12) = SUBSTR(#{userId},1,12)
+            OR SUBSTR(#{userId},1,12) = (select SUBSTR(proc.START_USER_ID_,1,12) from ACT_HI_PROCINST proc where
+            proc.proc_inst_id_=RES.PROC_INST_ID_)
+            )
+        </if>
+         )
+        ) t
+    </select>
+</mapper>

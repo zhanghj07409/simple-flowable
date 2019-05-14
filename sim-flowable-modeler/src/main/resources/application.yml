@@ -1,0 +1,81 @@
+server:
+  port: 8184
+  context-path: /flowable-modeler
+spring:
+  application:
+    name: sim-modeler
+  feign:
+    httpclient:
+      enabled: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/flowable?characterEncoding=utf8&useSSL=false
+    username: flowable
+    password: flowable
+    driver-class-name: com.mysql.jdbc.Driver
+  session:
+    store-type: redis
+  cache:
+    type: redis
+    database: 1
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 36000
+    database: 0
+    password:
+
+  ribbon:
+    ConnectTimeout: 50000
+    ReadTimeout: 180000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://admin:admin@localhost:8081/eureka/
+  instance:
+    hostname: ${spring.cloud.client.ipAddress}
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
+
+admin:
+  rest:
+    process:
+      app:
+        name: Flowable Process app
+        description: Flowable Process REST config
+        host: http://localhost
+        port: ${server.port}
+        contextroot: ${server.context-path}
+        restroot: process-api
+    dmn:
+      app:
+        name: Flowable DMN app
+        description: Flowable DMN REST config
+        host: http://localhost
+        port: ${server.port}
+        contextroot: ${server.context-path}
+        restroot: dmn-api
+    form:
+      app:
+        name: Flowable Form app
+        description: Flowable Form REST config
+        host: http://localhost
+        port: ${server.port}
+        contextroot: ${server.context-path}
+        restroot: form-api
+    content:
+      app:
+        name: Flowable Content app
+        description: Flowable Content REST config
+        host: http://localhost
+        port: ${server.port}
+        contextroot: ${server.context-path}
+        restroot: content-api
+
+management:
+  security:
+     enabled: false
+
+security:
+  encryption:
+    credentialsIVSpec: j8kdO2hejA9lKmm6
+    credentialsSecretSpec: 9FGl73ngxcOoJvmL

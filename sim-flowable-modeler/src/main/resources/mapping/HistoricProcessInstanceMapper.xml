@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.flowable.extention.task.dao.HistoricProcessInstanceDao">
+
+    <resultMap id="historicProcessInstanceResultMap" type="org.flowable.engine.impl.persistence.entity.HistoricProcessInstanceEntityImpl">
+        <id property="id" column="ID_" jdbcType="VARCHAR" />
+        <result property="revision" column="REV_" jdbcType="INTEGER"/>
+        <result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
+        <result property="businessKey" column="BUSINESS_KEY_" jdbcType="VARCHAR"/>
+        <result property="processDefinitionId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />
+        <result property="processDefinitionName" column="PROC_DEF_NAME_" jdbcType="VARCHAR" />
+        <result property="processDefinitionKey" column="PROC_DEF_KEY_" jdbcType="VARCHAR" />
+        <result property="processDefinitionVersion" column="PROC_DEF_VERSION_" jdbcType="INTEGER" />
+        <result property="deploymentId" column="DEPLOYMENT_ID_" jdbcType="VARCHAR" />
+        <result property="startTime" column="START_TIME_" jdbcType="TIMESTAMP" />
+        <result property="endTime" column="END_TIME_" jdbcType="TIMESTAMP" />
+        <result property="durationInMillis" column="DURATION_" jdbcType="BIGINT" />
+        <result property="startUserId" column="START_USER_ID_" jdbcType="VARCHAR" />
+        <result property="startActivityId" column="START_ACT_ID_" jdbcType="VARCHAR" />
+        <result property="endActivityId" column="END_ACT_ID_" jdbcType="VARCHAR" />
+        <result property="superProcessInstanceId" column="SUPER_PROCESS_INSTANCE_ID_" jdbcType="VARCHAR" />
+        <result property="deleteReason" column="DELETE_REASON_" jdbcType="VARCHAR" />
+        <result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
+        <result property="name" column="NAME_" jdbcType="VARCHAR" />
+        <result property="callbackId" column="CALLBACK_ID_" jdbcType="VARCHAR" />
+        <result property="callbackType" column="CALLBACK_TYPE_" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="listProcessInstanceByTaskAssignAndFinished" parameterType="java.lang.String" resultMap="historicProcessInstanceResultMap">
+        select distinct RES.* , DEF.KEY_ as PROC_DEF_KEY_, DEF.NAME_ as PROC_DEF_NAME_, DEF.VERSION_ as PROC_DEF_VERSION_, DEF.DEPLOYMENT_ID_ as DEPLOYMENT_ID_
+        from ACT_HI_PROCINST RES
+        left outer join ACT_RE_PROCDEF DEF on RES.PROC_DEF_ID_ = DEF.ID_
+        <where>
+            <if test="userId != null and userId != ''">
+                exists (select 1
+                           from act_hi_taskinst task
+                          where res.PROC_DEF_ID_ = task.PROC_DEF_ID_
+                            and res.PROC_INST_ID_ = task.PROC_INST_ID_
+                            and task.end_time_ is not null
+                            and task.assignee_ = #{userId}
+                        )
+            </if>
+            <if test="businesskey != null and businesskey != ''">
+                 RES.BUSINESS_KEY_ = #{businesskey}
+            </if>
+        </where>
+        <if test="page != null and rows != null">
+            order by START_TIME_ desc
+            limit #{page}, #{rows}
+        </if>
+    </select>
+
+    <select id="listProcessInstanceByTaskAssignCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(distinct RES.ID_)
+        from ACT_HI_PROCINST RES
+        <where>
+            <if test="userId != null and userId != ''">
+                exists (select 1
+                  from act_hi_taskinst task
+                 where res.PROC_DEF_ID_ = task.PROC_DEF_ID_
+                   and res.PROC_INST_ID_ = task.PROC_INST_ID_
+                   and task.end_time_ is not null
+                   and task.assignee_ = #{userId}
+                )
+            </if>
+        </where>
+    </select>
+
+</mapper>

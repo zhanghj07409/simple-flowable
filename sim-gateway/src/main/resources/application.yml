@@ -1,0 +1,67 @@
+server:
+  port: 8082
+management:
+  add-application-context-header: false
+  security:
+     enabled: false
+spring:
+  application:
+    name: gateway
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 36000
+    database: 0
+    password:
+  session:
+    store-type: redis
+  cache:
+    type: redis
+    database: 1
+zuul:
+  ribbon:
+    eager-load:
+      enabled: true
+  routes:
+    sim-modeler:
+      path: /modeler/**
+      serviceId: sim-modeler
+      sensitiveHeaders:
+    sim-basic:
+      path: /simbasic/**
+      serviceId: sim-basic
+      sensitiveHeaders:
+  add-host-header: true
+hystrix:
+  command:
+    sim-basic:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    sim-modeler:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+ribbon:
+  ConnectTimeout: 50000
+  ReadTimeout: 600000
+  eager-load:
+    enabled: true
+    clients: sim-modeler,sim-basic
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: DEBUG
+serviceFilter:
+  skipPattern: login|logout|list|query|get|select #不校验列表 只要路径中包含其中一个字段就不校验
+  enable: true  #是否开启权限校验 false 不校验
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://admin:admin@localhost:8081/eureka/
+  instance:
+    hostname: ${spring.cloud.client.ipAddress}
+    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${server.port}
