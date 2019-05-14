@@ -97,7 +97,7 @@ public class WorkFlowController {
         mapfu.put("roleCode","102");
         List<Map<String,String>> listfu = new ArrayList<>();
         listfu.add(mapfu);
-        map.put("102",listjing);
+        map.put("102",listfu);
 
         return map;
     }

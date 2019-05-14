@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"com.sim.common"})
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 3600)
-@ComponentScan(basePackages={"com.basic"})
+@ComponentScan(basePackages={"com.basic","com.sim.common"})
 public class SimBasicApplication {
 
 	public static void main(String[] args) {

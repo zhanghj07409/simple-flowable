@@ -78,12 +78,12 @@ public class CompleteOrClaimTaskController {
             String errorCode = resultMap.get(successList.get(2)) == null ? null : resultMap.get(successList.get(2)).toString();
             String errorMessage = resultMap.get(successList.get(3)) == null ? null : resultMap.get(successList.get(3)).toString();
             if (StringUtils.hasText(successCode) && StringUtils.hasText(successMessage)) {
-                return "操作成功！";
+                return "{\"success\":true,\"code\":\"PUB0001\",\"msg\":\"操作成功！\",\"data\":null}";
             }else if(StringUtils.hasText(errorCode) && StringUtils.hasText(errorMessage)){
-                return "操作失败！";
+                return "{\"success\":true,\"code\":\"PUB0001\",\"msg\":\"操作失败！\",\"data\":null}";
             }
         }
-        return "操作成功！";
+        return "{\"success\":true,\"code\":\"PUB0001\",\"msg\":\"操作成功！\",\"data\":null}";
     }
 
     @ResponseBody

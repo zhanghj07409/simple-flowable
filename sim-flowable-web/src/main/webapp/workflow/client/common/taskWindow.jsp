@@ -5,7 +5,7 @@
 <html>
 <meta http-equiv="X-UA-Compatible" content="IE=9;IE=8;IE=7;IE=EDGE">
 <head>
-    <title>策赢平台</title>
+    <title></title>
 </head>
 <body>
 <style>
@@ -229,7 +229,7 @@
         }
     }
     function check(buttonName){
-        var arr = ["不同意","否决","取消","拒绝","拒签"];
+        var arr = ["不同意","否决","取消","拒绝"];
         for(var i=0;i < arr.length;i++){
             if(arr[i] == buttonName){
                 return true;
@@ -242,8 +242,6 @@
         conditionExpression = conditionExpression.replace("$","*1*").replace("{","*2*").replace("==","*3*").replace("}","*4*");
         if (buttonName == "否决"){
             buttonName = "disagree";
-        }else if(buttonName == "拒签"){
-            buttonName = "reject";
         }else {
             buttonName = "";
         }
@@ -287,11 +285,11 @@
             headers : true,
             params: JSON.stringify(params),
             ok: function (result) {
-                alert("消息"+result.msg);
+                alert("消息："+result.msg);
                 $('button').removeAttr("disabled");
             },
             err: function(result){
-                alert("消息"+result.msg);
+                alert("消息："+result.msg);
                 $('button').removeAttr("disabled");
             }
         });

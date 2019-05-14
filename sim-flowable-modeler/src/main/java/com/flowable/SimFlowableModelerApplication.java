@@ -39,7 +39,7 @@ import java.util.Date;
 @EnableScheduling
 @EnableFeignClients(basePackages = {"com.flowable","org.flowable"})
 @Configuration
-@ComponentScan(basePackages={"com.flowable.configuration","com.flowable.extention"},
+@ComponentScan(basePackages={"com.flowable.configuration","com.flowable.extention","com.sim.common"},
 				excludeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION,classes = Controller.class)})
 @ServletComponentScan({"com.flowable","org.flowable"})
 public class SimFlowableModelerApplication {
