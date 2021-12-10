@@ -86,32 +86,6 @@
             <version>1.4.7.RELEASE</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>cfca</groupId>
-            <artifactId>logback-cfca-jdk1.6</artifactId>
-            <version>3.2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cfca</groupId>
-            <artifactId>sadk</artifactId>
-            <version>3.3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cfca</groupId>
-            <artifactId>devicetls</artifactId>
-            <version>3.2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cfca</groupId>
-            <artifactId>timestampapiv4</artifactId>
-            <version>4.0.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>cfca</groupId>
-            <artifactId>ra-toolkit</artifactId>
-            <version>3.6.4.8</version>
-        </dependency>
         <dependency>
             <groupId>com.github.briandilley.jsonrpc4j</groupId>
             <artifactId>jsonrpc4j</artifactId>
